@@ -63,7 +63,7 @@ resource "aws_lb_target_group" "main" {
   health_check {
     interval = 10
     matcher = "200-299"
-    path = locals.health_check_path
+    path = local.health_check_path
     port = local.tg_port
     protocol = "HTTP"
     timeout = 2
