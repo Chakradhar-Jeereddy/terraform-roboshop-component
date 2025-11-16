@@ -17,3 +17,4 @@ variable "rule_priority" {
 variable "domain_name" {
     default = "chakra86.shop"
 }
+
