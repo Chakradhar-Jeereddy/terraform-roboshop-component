@@ -4,7 +4,8 @@ locals {
     private_subnet_ids = split(",",data.aws_ssm_parameter.private_subnet_id.value)
     public_subnet_id = split(",",data.aws_ssm_parameter.public_subnet_id.value)[0]
     public_subnet_ids = split(",",data.aws_ssm_parameter.public_subnet_id.value)
-    subnet_ids = "${var.component}" == "frontend" ? local.public_subnet_ids : local.private_subnet_ids
+    #subnet_ids = "${var.component}" == "frontend" ? local.public_subnet_ids : local.private_subnet_ids
+    subnet_ids = local.private_subnet_ids
     backend_alb_listener_arn = data.aws_ssm_parameter.backend_alb_listener_arn.value
     frontend_alb_listener_arn = data.aws_ssm_parameter.frontend_alb_listener_arn.value
     alb_listener_arn = "${var.component}" == "frontend" ? local.frontend_alb_listener_arn : local.backend_alb_listener_arn
