@@ -388,4 +388,133 @@ variable "instances" {
 
   default = [
     "mongo",
+    "redis",
+    "mysql"
+  ]
+}
 ```
+
+Use it with `count`:
+
+```hcl
+resource "aws_instance" "myinstance" {
+  count = length(var.instances)
+
+  ami           = var.ami_id
+  instance_type = var.instance_type
+
+  tags = {
+    Name = var.instances[count.index]
+  }
+}
+```
+
+Terraform creates:
+
+```text
+Instance 0 → mongo
+Instance 1 → redis
+Instance 2 → mysql
+```
+
+Using:
+
+```hcl
+count = length(var.instances)
+```
+
+is better than hardcoding:
+
+```hcl
+count = 3
+```
+
+because the number of resources automatically follows the number of items in the list.
+
+---
+
+# 11. Outputs
+
+Outputs allow you to display or expose information after Terraform creates resources.
+
+Example:
+
+```hcl
+output "instance_id" {
+  value = aws_instance.myinstance.id
+}
+```
+
+For a resource using `count`, you can output all instance IDs:
+
+```hcl
+output "instance_ids" {
+  value = aws_instance.myinstance[*].id
+}
+```
+
+You can also output a specific instance:
+
+```hcl
+output "first_instance_id" {
+  value = aws_instance.myinstance[0].id
+}
+```
+
+After `terraform apply`, Terraform displays the output.
+
+You can also retrieve it with:
+
+```bash
+terraform output
+```
+
+Or:
+
+```bash
+terraform output instance_ids
+```
+
+---
+
+# 12. Important Terraform Concepts
+
+```text
+HCL
+ │
+ ├── Resources
+ │     └── Create infrastructure
+ │
+ ├── Variables
+ │     └── Make configuration reusable
+ │
+ ├── Attributes
+ │     └── Information exposed by resources
+ │
+ ├── Conditions
+ │     └── Choose values dynamically
+ │
+ ├── count
+ │     └── Create multiple resources
+ │
+ └── Outputs
+       └── Display/expose resource information
+```
+
+## Quick Reference
+
+| Concept     | Example                                       |
+| ----------- | --------------------------------------------- |
+| Resource    | `resource "aws_instance" "web" {}`            |
+| Variable    | `var.instance_type`                           |
+| Attribute   | `aws_instance.web.private_ip`                 |
+| Map         | `{ Name = "terraform" }`                      |
+| List        | `["mongo", "redis", "mysql"]`                 |
+| Condition   | `var.env == "dev" ? "t3.small" : "t3.medium"` |
+| Count       | `count = 3`                                   |
+| Count index | `count.index`                                 |
+| Output      | `output "ip" { value = ... }`                 |
+| Initialize  | `terraform init`                              |
+| Validate    | `terraform validate`                          |
+| Plan        | `terraform plan`                              |
+| Apply       | `terraform apply`                             |
